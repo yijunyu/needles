@@ -19,7 +19,6 @@ from pbjson import pb2json
 from needles_pb2 import Sequences as SEQ
 from needles_pb2 import Code as CODE
 # Flatbuffers
-import _needles
 from Code import *
 from Seq import *
 from Sequences import *
