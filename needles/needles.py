@@ -16,10 +16,10 @@ import flatbuffers
 from pbjson import pb2json
 #########  Importing generated code #########
 # Protobuf
-from needle_pb2 import Sequences as SEQ
-from needle_pb2 import Code as CODE
+from needles_pb2 import Sequences as SEQ
+from needles_pb2 import Code as CODE
 # Flatbuffers
-import _needle
+import _needles
 from Code import *
 from Seq import *
 from Sequences import *
@@ -65,7 +65,7 @@ def prepare_seq_as_fbs(builder, id, kind):
 ############################################################
 ## Main procedure:
 ##
-##     python needle.py [(load|save)] (bug|code)/id.(pb|fbs)
+##     python needles.py [(load|save)] (bug|code)/id.(pb|fbs)
 ##
 ## Options:
 ##     load or save

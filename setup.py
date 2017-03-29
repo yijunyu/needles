@@ -6,11 +6,11 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = codecs.open(os.path.join(here, 'README.md'), encoding='utf8').read()
 CHANGES = codecs.open(os.path.join(here, 'CHANGES'), encoding='utf8').read()
 
-with codecs.open(os.path.join(os.path.dirname(__file__), 'needle', '__init__.py'),
+with codecs.open(os.path.join(os.path.dirname(__file__), 'needles', '__init__.py'),
                  encoding='utf8') as version_file:
     metadata = dict(re.findall(r"""__([a-z]+)__ = "([^"]+)""", version_file.read()))
 
-setup(name='needle',
+setup(name='needles',
       version=metadata['version'],
       description='Conversion between binary buffers and LSTM input sequences.',
       long_description=README + '\n\n' +  CHANGES,
@@ -29,17 +29,17 @@ setup(name='needle',
       author='Yijun Yu',
       author_email='y.yu@open.ac.uk',
       url='https://github.com/yijunyu/needles/',
-      keywords=['needle', 'packaging'],
+      keywords=['needles', 'packaging'],
       license='GPL',
       packages=[
-          'needle',
+          'needles',
           ],
       extras_require={
           ':python_version=="2.6"': ['argparse'],
           'signatures': ['keyring', 'keyrings.alt'],
           'signatures:sys_platform!="win32"': ['pyxdg'],
           'signatures:python_version=="2.6"': ['importlib'],
-          'needleer-signatures': ['ed25519ll'],
+          'needleser-signatures': ['ed25519ll'],
           'tool': []
           },
       tests_require=['jsonschema', 'pytest', 'coverage', 'pytest-cov'],
@@ -47,9 +47,9 @@ setup(name='needle',
       zip_safe=False,
       entry_points = """\
 [console_scripts]
-needle = needle.needle:main
+needles = needles.needles:main
 
 [distutils.commands]
-bdist_needle = needle.bdist_needle:bdist_needle"""
+bdist_needles = needles.bdist_needles:bdist_needles"""
       )
 
