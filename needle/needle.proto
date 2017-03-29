@@ -1,0 +1,19 @@
+syntax="proto3";
+package needle;
+
+message Sequences {
+	enum Kind {
+		BUG = 0;
+		METHOD = 1;
+	}
+	Kind kind = 1;
+	int32 id = 2;
+	repeated Seq seq = 3;
+	message Seq {
+		repeated float vec = 1;	
+        }
+}
+message Code {
+	int32 id = 1;
+	repeated Sequences method = 2;
+}
