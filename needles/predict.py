@@ -46,7 +46,8 @@ def main():
     model = load_model(os.path.join(model_dir_path, "model_structure"), os.path.join(model_dir_path, "weight_epoch_{}".format(epoch)))
 
     test_oracle, predictions = generate_predictions(model, bug_contents, code_contents, file_oracle, method_oracle, nb_train_bug, tokenizer, lstm_seq_length, vocabulary_size, neg_method_num)
-    print "%s %s %f" % (sys.argv[1], sys.argv[2], predictions[0][0])
+    print sys.argv
+    print predictions
 
     # export_predictions(test_oracle, predictions, prediction_dir_path)
 
@@ -63,14 +64,20 @@ def generate_predictions(model, bug_contents, code_contents, file_oracle, method
 
     Initial = len(sys.argv) > 3
     if Initial:
-	    for bug_index in range(nb_train_bug, len(bug_contents)):
+	    #for bug_index in range(nb_train_bug, len(bug_contents)):
+	    if True:
+		bug_index = int(sys.argv[1])
 		# print("generating predictions for bug {} :".format(bug_index))
+		start_time = time.time()
 		one_hot_bug_seq = convert_to_lstm_input_form([bug_contents[bug_index]], tokenizer,lstm_seq_length, vocabulary_size, embedding_dimension=embedding_dimension)
 		if len(one_hot_bug_seq) == 0:
 		    print("testing bug sequence is void!")
-		    continue
+		    #continue
+		    return
 		test_oracle.append(file_oracle[bug_index][0])
 		save_bug_to_fbs(bug_index, onehot_seq_to_int_seq(one_hot_bug_seq))
+		end_time = time.time()
+		print end_time - start_time
 	    #print("===saved the bug vectors ===")
 	    #traverse each code file
 	    id = 0
@@ -88,6 +95,7 @@ def generate_predictions(model, bug_contents, code_contents, file_oracle, method
 		save_code_to_fbs(id, vec)
 	    #print("===saved the code vectors ===")
     else:
+	start_time = time.time()
         bug_index = int(sys.argv[1])
         test_oracle.append(file_oracle[bug_index][0])
 	one_bug_prediction = []
@@ -101,6 +109,8 @@ def generate_predictions(model, bug_contents, code_contents, file_oracle, method
 			v.append(int_to_onehot(vec[i][j], vocabulary_size))
 		one_hot_bug_seq.append(v)
 		one_hot_bug_seq = np.asarray(one_hot_bug_seq)
+	end_time = time.time()
+	print end_time - start_time
     	#print("===loaded onehot bug vectors in the batch ===")
     	id = int(sys.argv[2])
 	vec = load_code_from_fbs(id)
@@ -118,10 +128,7 @@ def generate_predictions(model, bug_contents, code_contents, file_oracle, method
 			one_hot_code_seq.append(m)
 		one_hot_code_seq = np.asarray(one_hot_code_seq)
 		#print("===loaded onehot code vectors in the batch ===")
-    		start_time = time.time()
 		prediction_result = model.predict([one_hot_bug_seq, reverse_seq(one_hot_bug_seq), one_hot_code_seq, reverse_seq(one_hot_code_seq)]);
-		end_time = time.time()
-		print end_time - start_time
 		value = abs(prediction_result[0][0][0])
 		scores.append(value)
 		#Here we can define different strategies from the method scores to the file score, here we only consider the average as a start
