@@ -1,2 +1,2 @@
-parallel -j0 --eta python predict.py {1} {2} ::: $(ls bug | sort -n | awk '{split($1,a,/\./);print a[1]}') ::: $(ls code | sort -n | awk '{split($1,a,/\./);print a[1]}')
+parallel python predict.py {1} {2} >> scores.txt ::: $(ls bug | sort -n | awk '{split($1,a,/\./);print a[1]}') ::: $(ls code | sort -n | awk '{split($1,a,/\./);print a[1]}')
 
