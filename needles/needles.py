@@ -23,6 +23,34 @@ from Code import *
 from Seq import *
 from Sequences import *
 from Kind import *
+
+def onehot_to_int(o):
+   for i in range(len(o)):
+      if o[i] != 0:
+         return i
+   return 0
+
+def int_to_onehot(v, n):
+   r = []
+   for i in range(n):
+      if i == v: 
+         r.append(1)
+      else:
+         r.append(0)
+   return r
+
+def onehot_seq_to_int_seq(one_hot_bug_seq):
+	to_save = []
+	N = len(one_hot_bug_seq)
+	for i in range(N):
+		vec = []
+		M = len(one_hot_bug_seq[i])
+		for j in range(M):
+			k = onehot_to_int(one_hot_bug_seq[i][j])	
+			vec.append(k)
+		to_save.append(vec)
+	return to_save
+
 ###################################################
 ## create a random record and save it into protobuf
 ###################################################
@@ -45,7 +73,7 @@ def prepare_seq_as_fbs(builder, id, kind, r):
 	M = len(r[i])
         SeqStartVecVector(builder, M)
         for j in range(M):
-            builder.PrependFloat32(r[i][j])
+            builder.PrependFloat64(r[i][j])
         vec = builder.EndVector(M)
         SeqStart(builder)
 	SeqAddVec(builder, vec)
@@ -130,7 +158,7 @@ def save_bug_to_pb(id, r):
 	bug = SEQ()
 	prepare_seq_as_pb(bug, id, 0, r)
 	serializedMessage = bug.SerializeToString()
-	out = open(sys.argv[1], 'wb')
+	out = open("bug/" + str(id) + ".pb", 'wb')
 	out.write(serializedMessage)
 	out.close()
 
@@ -139,7 +167,16 @@ def save_bug_to_fbs(id, r):
 	bug = prepare_seq_as_fbs(builder, id, 0, r)
 	builder.Finish(bug)
 	gen_buf, gen_off = builder.Bytes, builder.Head()
-	out = open(sys.argv[1], 'wb')
+	out = open("bug/" + str(id) + ".fbs", 'wb')
+	out.write(gen_buf[gen_off:])
+	out.close()
+
+def save_onehot_bug_to_fbs(id, o):
+	builder = flatbuffers.Builder(0)
+	bug = prepare_seq_as_fbs(builder, id, 0, r)
+	builder.Finish(bug)
+	gen_buf, gen_off = builder.Bytes, builder.Head()
+	out = open("bug/" + str(id) + ".fbs", 'wb')
 	out.write(gen_buf[gen_off:])
 	out.close()
 
@@ -151,7 +188,7 @@ def save_code_to_pb(id, c):
 	    r = c[k]
 	    prepare_seq_as_pb(method, k, 1, r)
 	serializedMessage = code.SerializeToString()
-	out = open(sys.argv[1], 'wb')
+	out = open("code/" + str(id) + ".pb", 'wb')
 	out.write(serializedMessage)
 	out.close()
 
@@ -172,7 +209,7 @@ def save_code_to_fbs(id, c):
 	code = CodeEnd(builder)
 	builder.Finish(code)
 	gen_buf, gen_off = builder.Bytes, builder.Head()
-	out = open(sys.argv[1], 'wb')
+	out = open("code/" + str(id) + ".fbs", 'wb')
 	out.write(gen_buf[gen_off:])
 	out.close()
 
